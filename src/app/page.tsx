@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { modelsApi, providersApi } from '@/lib/api';
 import type { ModelWithDetails, Provider } from '@/types';
-import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';\nimport { ModelForm } from '@/components/forms';
+import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { ModelForm } from '@/components/forms';
 
 export default function ModelsPage() {
   const [models, setModels] = useState<ModelWithDetails[]>([]);
@@ -11,7 +12,8 @@ export default function ModelsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProvider, setSelectedProvider] = useState<number | null>(null);
-  const [selectedType, setSelectedType] = useState<string>('');\n  const [showModelForm, setShowModelForm] = useState(false);
+  const [selectedType, setSelectedType] = useState<string>('');  
+  const [showModelForm, setShowModelForm] = useState(false);
 
   useEffect(() => {
     fetchData();

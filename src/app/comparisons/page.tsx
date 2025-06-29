@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { comparisonsApi, modelsApi, benchmarksApi, pricingApi } from '@/lib/api';
 import type { ComparisonTable, ModelWithDetails, Benchmark, Pricing } from '@/types';
-import { PlusIcon, EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';\nimport { ComparisonForm } from '@/components/forms';
+import { PlusIcon, EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ComparisonForm } from '@/components/forms';
 
 export default function ComparisonsPage() {
   const [comparisons, setComparisons] = useState<ComparisonTable[]>([]);
@@ -12,7 +13,8 @@ export default function ComparisonsPage() {
   const [modelBenchmarks, setModelBenchmarks] = useState<Record<number, Benchmark[]>>({});
   const [modelPricing, setModelPricing] = useState<Record<number, Pricing[]>>({});
   const [loading, setLoading] = useState(true);
-  const [detailsLoading, setDetailsLoading] = useState(false);\n  const [showComparisonForm, setShowComparisonForm] = useState(false);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [showComparisonForm, setShowComparisonForm] = useState(false);
 
   useEffect(() => {
     fetchComparisons();

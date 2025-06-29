@@ -1,7 +1,8 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime, date
-from .provider import Provider
+if TYPE_CHECKING:
+    from .provider import Provider
 
 class ModelBase(BaseModel):
     name: str
@@ -31,7 +32,7 @@ class Model(ModelBase):
         from_attributes = True
 
 class ModelWithDetails(Model):
-    provider: Optional[Provider] = None
+    provider: Optional['Provider'] = None
     benchmarks: List['BenchmarkBase'] = []
     pricing: List['PricingBase'] = []
     

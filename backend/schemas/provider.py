@@ -1,6 +1,9 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from .model import ModelBase
 
 class ProviderBase(BaseModel):
     name: str
