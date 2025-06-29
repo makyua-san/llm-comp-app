@@ -23,6 +23,7 @@ class ComparisonTable(ComparisonTableBase):
     
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ComparisonItemBase(BaseModel):
     comparison_table_id: int
@@ -38,9 +39,11 @@ class ComparisonItem(ComparisonItemBase):
     
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ComparisonTableWithItems(ComparisonTable):
     items: List[ComparisonItem] = []
     
     class Config:
         from_attributes = True
+        populate_by_name = True

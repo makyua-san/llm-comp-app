@@ -37,12 +37,15 @@ def get_benchmark(benchmark_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=Benchmark, status_code=status.HTTP_201_CREATED)
 def create_benchmark(benchmark: BenchmarkCreate, db: Session = Depends(get_db)):
     """Create a new benchmark"""
+    # Convert to dict
+    benchmark_data = benchmark.dict()
+    
     # Check if model exists
-    model = db.query(ModelModel).filter(ModelModel.id == benchmark.model_id).first()
+    model = db.query(ModelModel).filter(ModelModel.id == benchmark_data['model_id']).first()
     if not model:
         raise HTTPException(status_code=400, detail="Model not found")
     
-    db_benchmark = BenchmarkModel(**benchmark.dict())
+    db_benchmark = BenchmarkModel(**benchmark_data)
     db.add(db_benchmark)
     db.commit()
     db.refresh(db_benchmark)

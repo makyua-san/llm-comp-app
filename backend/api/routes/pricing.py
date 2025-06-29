@@ -61,12 +61,15 @@ def get_pricing_item(pricing_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=Pricing, status_code=status.HTTP_201_CREATED)
 def create_pricing(pricing: PricingCreate, db: Session = Depends(get_db)):
     """Create a new pricing item"""
+    # Convert to dict
+    pricing_data = pricing.dict()
+    
     # Check if model exists
-    model = db.query(ModelModel).filter(ModelModel.id == pricing.model_id).first()
+    model = db.query(ModelModel).filter(ModelModel.id == pricing_data['model_id']).first()
     if not model:
         raise HTTPException(status_code=400, detail="Model not found")
     
-    db_pricing = PricingModel(**pricing.dict())
+    db_pricing = PricingModel(**pricing_data)
     db.add(db_pricing)
     db.commit()
     db.refresh(db_pricing)

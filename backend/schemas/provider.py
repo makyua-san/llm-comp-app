@@ -25,9 +25,11 @@ class Provider(ProviderBase):
     
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ProviderWithModels(Provider):
     models: List['ModelBase'] = []
     
     class Config:
         from_attributes = True
+        populate_by_name = True

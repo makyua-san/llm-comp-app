@@ -50,7 +50,10 @@ def create_model(model: ModelCreate, db: Session = Depends(get_db)):
     if existing_model:
         raise HTTPException(status_code=400, detail="Model with this name already exists for this provider")
     
-    db_model = ModelModel(**model.dict())
+    # Convert to dict and map fields
+    model_data = model.dict()
+    
+    db_model = ModelModel(**model_data)
     db.add(db_model)
     db.commit()
     db.refresh(db_model)

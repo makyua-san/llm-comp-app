@@ -46,8 +46,8 @@ def get_comparison_table(table_id: int, db: Session = Depends(get_db)):
 def create_comparison_table(table: ComparisonTableCreate, db: Session = Depends(get_db)):
     """Create a new comparison table"""
     # Extract model_ids from the request
+    table_data = table.dict(exclude={'model_ids'})
     model_ids = table.model_ids
-    table_data = table.dict(exclude={"model_ids"})
     
     # Create the comparison table
     db_table = ComparisonTableModel(**table_data)
@@ -110,22 +110,25 @@ def add_comparison_item(table_id: int, item: ComparisonItemCreate, db: Session =
     if not table:
         raise HTTPException(status_code=404, detail="Comparison table not found")
     
+    # Convert to dict
+    item_data = item.dict()
+    
     # Check if model exists
-    model = db.query(ModelModel).filter(ModelModel.id == item.model_id).first()
+    model = db.query(ModelModel).filter(ModelModel.id == item_data['model_id']).first()
     if not model:
         raise HTTPException(status_code=400, detail="Model not found")
     
     # Check if item already exists
     existing_item = db.query(ComparisonItemModel).filter(
         ComparisonItemModel.comparison_table_id == table_id,
-        ComparisonItemModel.model_id == item.model_id
+        ComparisonItemModel.model_id == item_data['model_id']
     ).first()
     if existing_item:
         raise HTTPException(status_code=400, detail="Model already in comparison table")
     
     # Override the table_id to ensure consistency
-    item.comparison_table_id = table_id
-    db_item = ComparisonItemModel(**item.dict())
+    item_data['comparison_table_id'] = table_id
+    db_item = ComparisonItemModel(**item_data)
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

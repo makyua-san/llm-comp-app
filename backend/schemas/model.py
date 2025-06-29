@@ -3,6 +3,8 @@ from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime, date
 if TYPE_CHECKING:
     from .provider import Provider
+    from .benchmark import BenchmarkBase
+    from .pricing import PricingBase
 
 class ModelBase(BaseModel):
     name: str
@@ -30,6 +32,7 @@ class Model(ModelBase):
     
     class Config:
         from_attributes = True
+        populate_by_name = True
 
 class ModelWithDetails(Model):
     provider: Optional['Provider'] = None
@@ -38,3 +41,4 @@ class ModelWithDetails(Model):
     
     class Config:
         from_attributes = True
+        populate_by_name = True
