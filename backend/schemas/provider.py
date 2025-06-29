@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime
 
@@ -22,14 +22,6 @@ class Provider(ProviderBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True
 
 class ProviderWithModels(Provider):
     models: List['ModelBase'] = []
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True

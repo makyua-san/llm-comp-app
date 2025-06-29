@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
@@ -9,6 +9,8 @@ class ComparisonTableBase(BaseModel):
     is_public: bool = False
 
 class ComparisonTableCreate(ComparisonTableBase):
+    model_config = ConfigDict(protected_namespaces=())
+    
     model_ids: List[int] = []  # List of model IDs to include
 
 class ComparisonTableUpdate(BaseModel):
@@ -20,10 +22,6 @@ class ComparisonTable(ComparisonTableBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True
 
 class ComparisonItemBase(BaseModel):
     comparison_table_id: int
@@ -36,14 +34,6 @@ class ComparisonItemCreate(ComparisonItemBase):
 class ComparisonItem(ComparisonItemBase):
     id: int
     created_at: datetime
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True
 
 class ComparisonTableWithItems(ComparisonTable):
     items: List[ComparisonItem] = []
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True

@@ -1,7 +1,8 @@
-from .model import Model, ModelCreate, ModelUpdate, ModelWithDetails
+# Import order is critical for forward reference resolution
 from .provider import Provider, ProviderCreate, ProviderUpdate, ProviderWithModels
-from .benchmark import Benchmark, BenchmarkCreate, BenchmarkUpdate
-from .pricing import Pricing, PricingCreate, PricingUpdate
+from .benchmark import Benchmark, BenchmarkCreate, BenchmarkUpdate, BenchmarkBase
+from .pricing import Pricing, PricingCreate, PricingUpdate, PricingBase
+from .model import Model, ModelCreate, ModelUpdate, ModelWithDetails, ModelBase
 from .comparison import (
     ComparisonTable, 
     ComparisonTableCreate, 
@@ -11,18 +12,18 @@ from .comparison import (
     ComparisonItemCreate
 )
 
-# Ensure forward references are resolved by binding ModelBase into provider module namespace
-import sys as _sys
-_provider_module = _sys.modules.get(__name__ + '.provider')
-_model_module = _sys.modules.get(__name__ + '.model')
-if _provider_module and _model_module:
-    _provider_module.ModelBase = _model_module.ModelBase
-    # rebuild schemas to resolve forward refs
-    from typing import TYPE_CHECKING as _TYPE_CHECKING  # noqa: F401
-    try:
-        _provider_module.ProviderWithModels.model_rebuild()
-    except AttributeError:
-        pass
+# Rebuild schemas to resolve forward references
+Model.model_rebuild()
+# Resolve forward refs explicitly with namespace mapping to avoid runtime circular imports
+ModelWithDetails.model_rebuild(_types_namespace={
+    "Provider": Provider,
+    "BenchmarkBase": BenchmarkBase,
+    "PricingBase": PricingBase,
+})
+
+ProviderWithModels.model_rebuild(_types_namespace={
+    "ModelBase": ModelBase,
+})
 
 __all__ = [
     "Provider", "ProviderCreate", "ProviderUpdate", "ProviderWithModels",

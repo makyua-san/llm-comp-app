@@ -22,6 +22,8 @@ export default function ModelForm({ onClose, onSuccess }: ModelFormProps) {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showProviderForm, setShowProviderForm] = useState(false);
+  const [newProviderName, setNewProviderName] = useState('');
 
   useEffect(() => {
     fetchProviders();
@@ -33,6 +35,25 @@ export default function ModelForm({ onClose, onSuccess }: ModelFormProps) {
       setProviders(response.data);
     } catch (error) {
       console.error('Error fetching providers:', error);
+    }
+  };
+
+  const handleAddProvider = async () => {
+    if (!newProviderName.trim()) return;
+    
+    try {
+      const response = await providersApi.create({
+        name: newProviderName.trim(),
+        description: `Custom provider: ${newProviderName.trim()}`
+      });
+      
+      setProviders([...providers, response.data]);
+      setFormData({ ...formData, provider_id: response.data.id });
+      setNewProviderName('');
+      setShowProviderForm(false);
+    } catch (error) {
+      console.error('Error creating provider:', error);
+      setErrors({ provider: 'Failed to create provider' });
     }
   };
 
@@ -93,19 +114,66 @@ export default function ModelForm({ onClose, onSuccess }: ModelFormProps) {
 
           <div>
             <label className="label">Provider *</label>
-            <select
-              required
-              className="input-field"
-              value={formData.provider_id}
-              onChange={(e) => setFormData({ ...formData, provider_id: Number(e.target.value) })}
-            >
-              <option value="">Select a provider</option>
-              {providers.map(provider => (
-                <option key={provider.id} value={provider.id}>
-                  {provider.name}
-                </option>
-              ))}
-            </select>
+            <div className="space-y-2">
+              <select
+                required
+                className="input-field"
+                value={formData.provider_id}
+                onChange={(e) => setFormData({ ...formData, provider_id: Number(e.target.value) })}
+              >
+                <option value="">Select a provider</option>
+                {providers.map(provider => (
+                  <option key={provider.id} value={provider.id}>
+                    {provider.name}
+                  </option>
+                ))}
+              </select>
+              
+              {errors.provider && (
+                <div className="text-red-600 text-sm">{errors.provider}</div>
+              )}
+              
+              <div className="flex items-center space-x-2">
+                {!showProviderForm ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowProviderForm(true)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    + Add New Provider
+                  </button>
+                ) : (
+                  <div className="flex items-center space-x-2 w-full">
+                    <input
+                      type="text"
+                      className="flex-1 px-3 py-1 border border-gray-300 rounded-md text-sm"
+                      placeholder="Provider name"
+                      value={newProviderName}
+                      onChange={(e) => setNewProviderName(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddProvider()}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddProvider}
+                      className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowProviderForm(false);
+                        setNewProviderName('');
+                        setErrors({ ...errors, provider: '' });
+                      }}
+                      className="px-3 py-1 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div>

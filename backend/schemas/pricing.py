@@ -1,9 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime, date
 from decimal import Decimal
 
 class PricingBase(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     model_id: int
     price_type: str  # 'input_tokens', 'output_tokens', 'requests', etc.
     price: Decimal
@@ -17,6 +19,8 @@ class PricingCreate(PricingBase):
     pass
     
 class PricingUpdate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     model_id: Optional[int] = None
     price_type: Optional[str] = None
     price: Optional[Decimal] = None
@@ -30,7 +34,3 @@ class Pricing(PricingBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True

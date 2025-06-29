@@ -1,12 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime, date
-if TYPE_CHECKING:
-    from .provider import Provider
-    from .benchmark import BenchmarkBase
-    from .pricing import PricingBase
+
+# Runtime imports for forward reference resolution
+from .benchmark import BenchmarkBase  # noqa: E402, F401
+from .pricing import PricingBase  # noqa: E402, F401
 
 class ModelBase(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     name: str
     provider_id: int
     model_type: Optional[str] = None
@@ -18,6 +20,8 @@ class ModelCreate(ModelBase):
     pass
 
 class ModelUpdate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     name: Optional[str] = None
     provider_id: Optional[int] = None
     model_type: Optional[str] = None
@@ -29,16 +33,8 @@ class Model(ModelBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True
 
 class ModelWithDetails(Model):
     provider: Optional['Provider'] = None
     benchmarks: List['BenchmarkBase'] = []
     pricing: List['PricingBase'] = []
-    
-    class Config:
-        from_attributes = True
-        populate_by_name = True
